@@ -1,0 +1,12 @@
+scrapy
+playwright
+pydantic
+loguru
+python-dotenv
+pytest
+aiohttp
+httpx
+beautifulsoup4
+selenium
+lxml
+requests
