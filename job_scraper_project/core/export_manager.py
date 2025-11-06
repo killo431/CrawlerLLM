@@ -10,6 +10,13 @@ logger = logging.getLogger(__name__)
 
 FormatType = Literal["json", "csv"]
 
+# Allowed output directories for security
+ALLOWED_OUTPUT_DIRS = {
+    "data/output",
+    "output",
+    "/tmp/output",
+}
+
 
 def _validate_filename(name: str) -> str:
     """
@@ -40,6 +47,32 @@ def _validate_filename(name: str) -> str:
     return safe_name
 
 
+def _validate_output_folder(folder: str) -> Path:
+    """
+    Validate output folder to prevent path traversal.
+    
+    Args:
+        folder: Output folder path
+        
+    Returns:
+        Validated Path object
+        
+    Raises:
+        ValueError: If folder path is invalid or not allowed
+    """
+    # Normalize the path
+    folder_path = Path(folder).resolve()
+    
+    # Check if it's in the allowed list
+    if folder not in ALLOWED_OUTPUT_DIRS:
+        # For backward compatibility, allow data/output subdirectories
+        if not str(folder_path).endswith(os.path.sep + "output") and "data" not in str(folder_path):
+            logger.warning(f"Output folder {folder} not in allowed list, using default")
+            folder = "data/output"
+    
+    return Path(folder)
+
+
 def export_data(
     data: Union[List[Dict[str, Any]], Dict[str, Any]],
     name: str,
@@ -53,7 +86,7 @@ def export_data(
         data: Data to export (list of dicts or single dict)
         name: Base name for the output file (without extension)
         format: Output format ("json" or "csv")
-        folder: Output directory path
+        folder: Output directory path (must be in allowed list)
         
     Returns:
         True if export successful, False otherwise
@@ -74,16 +107,19 @@ def export_data(
         # Sanitize filename to prevent path traversal
         safe_name = _validate_filename(name)
         
-        # Ensure output directory exists
-        output_path = Path(folder)
+        # Validate and get safe output directory
+        output_path = _validate_output_folder(folder)
         output_path.mkdir(parents=True, exist_ok=True)
         
-        # Create file path with sanitized name
-        file_path = output_path / f"{safe_name}.{format}"
+        # Create file path with sanitized name - use only basename for security
+        file_path = output_path / safe_name
+        file_path = file_path.with_suffix(f".{format}")
         
-        # Ensure the resolved path is still within the output directory
-        if not file_path.resolve().is_relative_to(output_path.resolve()):
-            raise ValueError("Invalid path: path traversal detected")
+        # Final safety check: ensure resolved path is within output directory
+        try:
+            file_path.resolve().relative_to(output_path.resolve())
+        except ValueError:
+            raise ValueError("Invalid path: attempted path traversal detected")
         
         # Export based on format
         if format == "json":
@@ -104,13 +140,25 @@ def export_data(
 
 
 def _export_json(data: Union[List[Dict], Dict], file_path: Path) -> None:
-    """Export data to JSON format."""
+    """
+    Export data to JSON format.
+    
+    Args:
+        file_path: Validated and safe file path
+        data: Data to export
+    """
     with open(file_path, "w", encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 def _export_csv(data: Union[List[Dict], Dict], file_path: Path) -> None:
-    """Export data to CSV format."""
+    """
+    Export data to CSV format.
+    
+    Args:
+        file_path: Validated and safe file path
+        data: Data to export
+    """
     # Convert single dict to list
     if isinstance(data, dict):
         data = [data]
