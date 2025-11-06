@@ -2,7 +2,7 @@
 import time
 import psutil
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -118,7 +118,7 @@ class HealthCheck:
 
 
 # Global health check instance
-_health_check: HealthCheck = None
+_health_check: Optional[HealthCheck] = None
 
 
 def get_health_check() -> HealthCheck:

@@ -38,7 +38,8 @@ def test_config_get_site_config():
     
     assert indeed_config is not None
     assert isinstance(indeed_config, SiteConfig)
-    assert 'indeed.com' in indeed_config.base_url
+    # Verify the base URL starts with the expected domain
+    assert indeed_config.base_url.startswith('https://www.indeed.com/')
 
 
 def test_config_get_missing_site():

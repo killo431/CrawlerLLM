@@ -11,6 +11,35 @@ logger = logging.getLogger(__name__)
 FormatType = Literal["json", "csv"]
 
 
+def _validate_filename(name: str) -> str:
+    """
+    Validate and sanitize filename to prevent path traversal.
+    
+    Args:
+        name: Filename to validate
+        
+    Returns:
+        Sanitized filename
+        
+    Raises:
+        ValueError: If filename is invalid
+    """
+    # Remove any path separators
+    name = os.path.basename(name)
+    
+    # Check for empty or invalid names
+    if not name or name in ('.', '..'):
+        raise ValueError("Invalid filename")
+    
+    # Remove any non-alphanumeric characters except dash and underscore
+    safe_name = ''.join(c for c in name if c.isalnum() or c in ('_', '-'))
+    
+    if not safe_name:
+        raise ValueError("Filename contains no valid characters")
+    
+    return safe_name
+
+
 def export_data(
     data: Union[List[Dict[str, Any]], Dict[str, Any]],
     name: str,
@@ -30,7 +59,7 @@ def export_data(
         True if export successful, False otherwise
         
     Raises:
-        ValueError: If data format is invalid
+        ValueError: If data format is invalid or filename is unsafe
         IOError: If file cannot be written
     """
     try:
@@ -42,11 +71,19 @@ def export_data(
         if format not in ["json", "csv"]:
             raise ValueError(f"Unsupported format: {format}. Use 'json' or 'csv'")
         
+        # Sanitize filename to prevent path traversal
+        safe_name = _validate_filename(name)
+        
         # Ensure output directory exists
         output_path = Path(folder)
         output_path.mkdir(parents=True, exist_ok=True)
         
-        file_path = output_path / f"{name}.{format}"
+        # Create file path with sanitized name
+        file_path = output_path / f"{safe_name}.{format}"
+        
+        # Ensure the resolved path is still within the output directory
+        if not file_path.resolve().is_relative_to(output_path.resolve()):
+            raise ValueError("Invalid path: path traversal detected")
         
         # Export based on format
         if format == "json":
