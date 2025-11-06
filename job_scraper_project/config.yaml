@@ -1,0 +1,20 @@
+# Global configuration
+global:
+  output_format: json
+  log_level: INFO
+  
+# Site-specific configurations
+indeed:
+  base_url: "https://www.indeed.com/jobs?q=python"
+  crawl_delay: 2
+  dynamic: false
+
+linkedin:
+  base_url: "https://www.linkedin.com/jobs/search/?keywords=python"
+  crawl_delay: 3
+  dynamic: true
+
+glassdoor:
+  base_url: "https://www.glassdoor.com/Job/python-jobs"
+  crawl_delay: 2
+  dynamic: true
