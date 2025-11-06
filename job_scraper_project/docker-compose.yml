@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  job-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: job-scraper-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data/output:/app/data/output
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # CLI version for batch processing
+  job-scraper-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: job-scraper-cli
+    command: python main.py
+    volumes:
+      - ./data/output:/app/data/output
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    profiles:
+      - cli
+
+volumes:
+  data:
+  logs:
