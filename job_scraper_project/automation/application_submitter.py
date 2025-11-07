@@ -15,6 +15,7 @@ from automation.handlers import (
     GreenhouseHandler,
     GenericHandler
 )
+from automation.rate_limiter import AdaptiveRateLimiter
 from core.logger import setup_logger
 
 logger = setup_logger("application_submitter")
@@ -56,8 +57,12 @@ class ApplicationSubmitter:
         self.context = None
         self.page = None
         
-        # Track submissions for rate limiting
-        self.submission_history: List[float] = []
+        # Use adaptive rate limiter
+        self.rate_limiter = AdaptiveRateLimiter(
+            default_rate=10,
+            min_delay=self.config.delay_between_submissions,
+            max_delay=300
+        )
     
     def __enter__(self):
         """Context manager entry"""
@@ -146,19 +151,32 @@ class ApplicationSubmitter:
         Returns:
             Platform identifier (e.g., 'linkedin', 'indeed', 'greenhouse')
         """
-        url_lower = application_url.lower()
+        from urllib.parse import urlparse
         
-        if 'linkedin.com' in url_lower:
-            return 'linkedin'
-        elif 'indeed.com' in url_lower:
-            return 'indeed'
-        elif 'greenhouse.io' in url_lower or 'boards.greenhouse.io' in url_lower:
-            return 'greenhouse'
-        elif 'lever.co' in url_lower:
-            return 'lever'
-        elif 'workday.com' in url_lower:
-            return 'workday'
-        else:
+        try:
+            parsed = urlparse(application_url)
+            hostname = parsed.hostname
+            
+            if not hostname:
+                return 'generic'
+            
+            hostname_lower = hostname.lower()
+            
+            # Check for exact domain matches or subdomain matches
+            if hostname_lower == 'linkedin.com' or hostname_lower.endswith('.linkedin.com'):
+                return 'linkedin'
+            elif hostname_lower == 'indeed.com' or hostname_lower.endswith('.indeed.com'):
+                return 'indeed'
+            elif hostname_lower == 'greenhouse.io' or hostname_lower.endswith('.greenhouse.io'):
+                return 'greenhouse'
+            elif hostname_lower == 'lever.co' or hostname_lower.endswith('.lever.co'):
+                return 'lever'
+            elif hostname_lower == 'workday.com' or hostname_lower.endswith('.workday.com'):
+                return 'workday'
+            else:
+                return 'generic'
+        except Exception as e:
+            logger.warning(f"Error parsing URL {application_url}: {e}")
             return 'generic'
     
     async def submit_application(
@@ -186,14 +204,24 @@ class ApplicationSubmitter:
         logger.info(f"Starting application submission for job {job_id}")
         
         try:
-            # Check rate limiting
-            if not self._check_rate_limit():
-                logger.warning("Rate limit exceeded, waiting...")
-                time.sleep(self.config.delay_between_submissions)
-            
             # Detect platform
             platform = self.detect_platform(application_url)
             logger.info(f"Detected platform: {platform}")
+            
+            # Check rate limiting for this platform
+            if not self.rate_limiter.check_rate_limit(platform):
+                stats = self.rate_limiter.get_platform_stats(platform)
+                logger.warning(f"Rate limit exceeded for {platform}: {stats}")
+                return SubmissionResult(
+                    success=False,
+                    job_id=job_id,
+                    platform=platform,
+                    status=SubmissionStatus.RATE_LIMITED,
+                    error_message=self.rate_limiter.suggest_optimal_timing(platform)
+                )
+            
+            # Wait if needed based on adaptive rate limiting
+            self.rate_limiter.wait_if_needed(platform)
             
             # Get appropriate handler
             handler = self.handlers.get(platform)
@@ -236,8 +264,15 @@ class ApplicationSubmitter:
                     if attempt == self.config.max_retries - 1:
                         raise
             
-            # Track submission time for rate limiting
-            self._record_submission()
+            # Record submission for rate limiting
+            error_type = None
+            if not result.success:
+                if result.status == SubmissionStatus.RATE_LIMITED:
+                    error_type = 'rate_limited'
+                elif result.status == SubmissionStatus.CAPTCHA_DETECTED:
+                    error_type = 'captcha'
+            
+            self.rate_limiter.record_submission(platform, result.success, error_type)
             
             # Log result
             if result.success:
@@ -257,33 +292,28 @@ class ApplicationSubmitter:
                 error_message=str(e)
             )
     
-    def _check_rate_limit(self) -> bool:
+    def get_rate_limiter_stats(self) -> Dict[str, Dict]:
         """
-        Check if we're within rate limits
+        Get rate limiter statistics for all platforms.
         
         Returns:
-            True if within limits, False if rate limited
+            Dictionary mapping platform to stats
         """
-        current_time = time.time()
-        
-        # Remove submissions older than 1 hour
-        cutoff_time = current_time - 3600
-        self.submission_history = [
-            t for t in self.submission_history if t > cutoff_time
-        ]
-        
-        # Check if we've exceeded the hourly limit
-        # TODO: Add applications_per_hour to SubmissionConfig
-        max_per_hour = 10  # Default rate limit
-        
-        if len(self.submission_history) >= max_per_hour:
-            return False
-        
-        return True
+        return self.rate_limiter.get_all_stats()
     
-    def _record_submission(self):
-        """Record a submission for rate limiting"""
-        self.submission_history.append(time.time())
+    def reset_rate_limiter(self, platform: Optional[str] = None):
+        """
+        Reset rate limiter for a specific platform or all platforms.
+        
+        Args:
+            platform: Platform to reset, or None to reset all
+        """
+        if platform:
+            self.rate_limiter.reset_platform(platform)
+        else:
+            # Reset all platforms
+            for plat in self.rate_limiter.platform_history.keys():
+                self.rate_limiter.reset_platform(plat)
     
     async def submit_batch(
         self,

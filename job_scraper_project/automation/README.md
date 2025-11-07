@@ -253,13 +253,43 @@ pytest tests/test_models.py
 
 All tests are mocked and don't require browser installation.
 
-## Limitations
+## Enhanced Features
 
-- **CAPTCHA**: Requires manual intervention
-- **Complex Forms**: May need manual submission
-- **External Redirects**: Limited support
-- **Custom ATS**: Use generic handler
-- **Rate Limits**: Platform-dependent
+### CAPTCHA Handling ✅
+- **Automatic Detection**: Detects reCAPTCHA, hCAPTCHA, Cloudflare, and generic CAPTCHAs
+- **Audio Fallback**: Attempts to switch to audio CAPTCHA when available
+- **Manual Intervention**: Pauses and notifies user with clear instructions
+- **Bypass Strategies**: Checks for auto-resolution and alternative paths
+- **Smart Waiting**: Monitors CAPTCHA status during manual solving
+
+### External Redirect Support ✅
+- **Redirect Detection**: Automatically detects external application redirects
+- **Platform Identification**: Identifies 10+ ATS platforms after redirect
+- **Iframe Detection**: Handles embedded applications
+- **Automatic Following**: Follows redirects to known platforms
+- **Redirect Chain Tracking**: Maintains full redirect history
+
+### Adaptive Rate Limiting ✅
+- **Per-Platform Limits**: Separate rate limiting for each platform
+- **Adaptive Delays**: Automatically adjusts based on success/failure rates
+- **Exponential Backoff**: Increases delays on rate limit detection
+- **Random Jitter**: Adds human-like randomness (±20%)
+- **Smart Recovery**: Gradually reduces delays after successful submissions
+- **Real-Time Stats**: View current rate limit status per platform
+
+### Complex Form Handling ✅
+- **Multi-Step Navigation**: Handles 2-10 step application forms
+- **Dynamic Field Detection**: Adapts to changing form structures
+- **Custom Question Support**: Handles screening questions with configurable responses
+- **Validation Error Recovery**: Detects and attempts to fix validation errors
+- **Progressive Enhancement**: Falls back gracefully on unknown fields
+
+## Remaining Limitations
+
+- **Some CAPTCHAs**: Very complex visual CAPTCHAs may still require manual solving
+- **Highly Custom Forms**: Extremely customized forms may need manual completion
+- **Unknown ATS Systems**: New/obscure ATS may not be recognized (uses generic handler)
+- **Platform-Specific Rate Limits**: Each platform has different rate limits (now tracked separately)
 
 ## Best Practices
 

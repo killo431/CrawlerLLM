@@ -11,6 +11,8 @@ from automation.models import SubmissionResult, SubmissionStatus, ApplicationDat
 from automation.form_mapper import FormMapper
 from automation.document_uploader import DocumentUploader
 from automation.navigation import FormNavigator
+from automation.captcha_solver import CaptchaSolver
+from automation.redirect_handler import RedirectHandler
 from core.logger import setup_logger
 
 logger = setup_logger("base_handler")
@@ -45,6 +47,8 @@ class BaseHandler(ABC):
         self.form_mapper = FormMapper(page)
         self.document_uploader = DocumentUploader(page)
         self.navigator = FormNavigator(page)
+        self.captcha_solver = CaptchaSolver(page)
+        self.redirect_handler = RedirectHandler(page)
         
         # Ensure screenshot directory exists
         Path(screenshot_dir).mkdir(parents=True, exist_ok=True)
@@ -140,27 +144,20 @@ class BaseHandler(ABC):
         Returns:
             True if CAPTCHA detected
         """
-        try:
-            # Common CAPTCHA selectors
-            captcha_selectors = [
-                'iframe[src*="recaptcha"]',
-                'iframe[src*="hcaptcha"]',
-                '.g-recaptcha',
-                '.h-captcha',
-                '#captcha',
-                '[data-captcha]'
-            ]
+        captcha_info = self.captcha_solver.detect_captcha()
+        return captcha_info is not None
+    
+    def handle_captcha(self, auto_solve: bool = False) -> bool:
+        """
+        Handle CAPTCHA if present.
+        
+        Args:
+            auto_solve: Whether to attempt automatic solving
             
-            for selector in captcha_selectors:
-                if self.page.query_selector(selector):
-                    logger.warning(f"CAPTCHA detected: {selector}")
-                    return True
-            
-            return False
-            
-        except Exception as e:
-            logger.error(f"Error detecting CAPTCHA: {e}")
-            return False
+        Returns:
+            True if CAPTCHA handled successfully
+        """
+        return self.captcha_solver.handle_captcha(auto_solve=auto_solve)
     
     def wait_for_page_load(self, timeout: int = 30):
         """

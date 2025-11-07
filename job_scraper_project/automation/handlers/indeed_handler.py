@@ -266,10 +266,15 @@ class IndeedHandler(BaseHandler):
     def _is_indeed_hosted_application(self) -> bool:
         """Check if application is Indeed-hosted"""
         try:
-            # Check URL
-            current_url = self.page.url
-            if 'indeed.com' in current_url and 'apply' in current_url.lower():
-                return True
+            from urllib.parse import urlparse
+            
+            # Check URL using proper domain parsing
+            parsed = urlparse(self.page.url)
+            hostname = parsed.hostname
+            
+            if hostname and (hostname == 'indeed.com' or hostname.endswith('.indeed.com')):
+                if 'apply' in self.page.url.lower():
+                    return True
             
             # Check for Indeed application elements
             indeed_indicators = [

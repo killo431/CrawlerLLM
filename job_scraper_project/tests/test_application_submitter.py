@@ -58,15 +58,22 @@ def test_rate_limiting():
     config = SubmissionConfig()
     submitter = ApplicationSubmitter(config)
     
+    platform = 'linkedin'
+    
     # Initially should be within limits
-    assert submitter._check_rate_limit()
+    assert submitter.rate_limiter.check_rate_limit(platform)
     
     # Record multiple submissions
     for _ in range(10):
-        submitter._record_submission()
+        submitter.rate_limiter.record_submission(platform, success=True)
     
     # Should now be rate limited
-    assert not submitter._check_rate_limit()
+    assert not submitter.rate_limiter.check_rate_limit(platform)
+    
+    # Get stats
+    stats = submitter.get_rate_limiter_stats()
+    assert platform in stats
+    assert stats[platform]['submissions_last_hour'] == 10
 
 
 def test_submission_status_enum():
