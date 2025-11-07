@@ -59,14 +59,14 @@ def test_rate_limiting():
     submitter = ApplicationSubmitter(config)
     
     # Initially should be within limits
-    assert submitter._check_rate_limit() == True
+    assert submitter._check_rate_limit()
     
     # Record multiple submissions
     for _ in range(10):
         submitter._record_submission()
     
     # Should now be rate limited
-    assert submitter._check_rate_limit() == False
+    assert not submitter._check_rate_limit()
 
 
 def test_submission_status_enum():

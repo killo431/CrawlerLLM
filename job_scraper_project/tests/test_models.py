@@ -21,7 +21,7 @@ def test_submission_result_creation():
         status=SubmissionStatus.SUCCESS
     )
     
-    assert result.success == True
+    assert result.success
     assert result.job_id == 'test_job_123'
     assert result.platform == 'linkedin'
     assert result.status == SubmissionStatus.SUCCESS
@@ -37,7 +37,7 @@ def test_submission_result_failure():
         error_message='Connection timeout'
     )
     
-    assert result.success == False
+    assert not result.success
     assert result.error_message == 'Connection timeout'
     assert result.status == SubmissionStatus.FAILED
 
@@ -101,9 +101,9 @@ def test_navigation_state_initialization():
     
     assert state.current_step == 0
     assert state.total_steps == 1
-    assert state.can_go_next == True
-    assert state.can_go_back == False
-    assert state.is_final_step == False
+    assert state.can_go_next
+    assert not state.can_go_back
+    assert not state.is_final_step
 
 
 def test_navigation_state_advance():
@@ -118,7 +118,7 @@ def test_navigation_state_advance():
     
     state.advance_step()
     assert state.current_step == 2
-    assert state.is_final_step == True
+    assert state.is_final_step
 
 
 def test_navigation_state_go_back():
@@ -128,7 +128,7 @@ def test_navigation_state_go_back():
     
     state.go_back()
     assert state.current_step == 1
-    assert state.is_final_step == False
+    assert not state.is_final_step
 
 
 def test_navigation_state_string():

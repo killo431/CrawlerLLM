@@ -189,7 +189,7 @@ class LinkedInHandler(BaseHandler):
             # Fill each mapped field
             for field, value in field_mapping.items():
                 try:
-                    if field.field_type.value == 'text' or field.field_type.value == 'email' or field.field_type.value == 'phone':
+                    if field.field_type.value in ('text', 'email', 'phone'):
                         self.fill_text_field(field.selector, str(value))
                     elif field.field_type.value == 'select':
                         self.select_option(field.selector, str(value))

@@ -82,7 +82,7 @@ class ApplicationSubmitter:
             
             self.context = self.browser.new_context(
                 viewport={'width': 1920, 'height': 1080},
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
             )
             
             # Apply stealth patches
@@ -272,9 +272,9 @@ class ApplicationSubmitter:
             t for t in self.submission_history if t > cutoff_time
         ]
         
-        # Check if we've exceeded the hourly limit (from config)
-        # For now, use a default of 10 per hour
-        max_per_hour = 10
+        # Check if we've exceeded the hourly limit
+        # TODO: Add applications_per_hour to SubmissionConfig
+        max_per_hour = 10  # Default rate limit
         
         if len(self.submission_history) >= max_per_hour:
             return False
