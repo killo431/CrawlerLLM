@@ -26,12 +26,23 @@ cd job_scraper_project
 pip install -r requirements.txt
 playwright install
 
-# Run the dashboard
+# Run the NEW home page (recommended)
+streamlit run dashboard/home.py
+
+# OR run the configuration wizard
+streamlit run dashboard/copilot_wizard.py
+
+# OR run the main dashboard
+streamlit run dashboard/jobcopilot_app.py
+
+# OR run the job scraping dashboard
 streamlit run dashboard/app.py
 
 # OR run the CLI version
 python main.py
 ```
+
+See [job_scraper_project/QUICK_START.md](job_scraper_project/QUICK_START.md) for detailed instructions.
 
 ## Project Structure
 
@@ -54,6 +65,17 @@ CrawlerLLM/
 ```
 
 ## Features of the Rebuilt Project
+
+### 🆕 NEW in v1.1 - UX Improvements (Based on AiCopilotCFG Example)
+- **Configuration Wizard**: 4-step guided setup for first-time users
+  - Step 1: Job preferences (location, types, titles)
+  - Step 2: Optional filters (experience, salary)
+  - Step 3: Resume upload and selection
+  - Step 4: Writing style customization
+- **Home Page**: Professional landing page with quick access
+- **Improved Navigation**: Clear paths between all features
+- **Visual Design**: Custom theme matching AiCopilotCFG pattern
+- **Documentation**: Comprehensive guides for all features
 
 ### Job Scraping
 - Modular adapter system for Indeed, LinkedIn, Glassdoor
