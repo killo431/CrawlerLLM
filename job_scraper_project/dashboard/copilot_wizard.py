@@ -367,22 +367,22 @@ def render_step_3():
     # Option to use existing resume
     st.markdown("### Or Use Existing Resume")
     
-    # Mock existing resumes for demo
-    existing_resumes = [
-        "John_Doe_Resume_2024.pdf",
-        "Software_Engineer_Resume.pdf",
-        "Data_Scientist_CV.docx"
-    ]
+    # TODO: Replace with actual database query for user's uploaded resumes
+    # This is placeholder data for demonstration purposes
+    existing_resumes = []  # In production, fetch from database
     
-    selected_existing = st.selectbox(
-        "Select from previously uploaded resumes",
-        ["None"] + existing_resumes,
-        key="existing_resume"
-    )
-    
-    if selected_existing != "None":
-        st.session_state.config['resume_path'] = f"/uploads/{selected_existing}"
-        st.info(f"📄 Using: {selected_existing}")
+    if existing_resumes:
+        selected_existing = st.selectbox(
+            "Select from previously uploaded resumes",
+            ["None"] + existing_resumes,
+            key="existing_resume"
+        )
+        
+        if selected_existing != "None":
+            st.session_state.config['resume_path'] = f"/uploads/{selected_existing}"
+            st.info(f"📄 Using: {selected_existing}")
+    else:
+        st.info("💡 No previously uploaded resumes found. Upload a new resume above.")
     
     # Navigation
     st.markdown("<div style='margin-top: 3rem;'>", unsafe_allow_html=True)
@@ -481,7 +481,9 @@ def render_step_4():
     with col1:
         st.markdown("**Job Preferences:**")
         st.write(f"• Job Types: {', '.join(st.session_state.config['job_types'])}")
-        st.write(f"• Job Titles: {', '.join(st.session_state.config['job_titles'][:3])}...")
+        titles = st.session_state.config['job_titles']
+        titles_display = ', '.join(titles[:3]) + ('...' if len(titles) > 3 else '')
+        st.write(f"• Job Titles: {titles_display}")
         st.write(f"• Remote: {'✓' if st.session_state.config['include_remote'] else '✗'}")
         st.write(f"• On-site: {'✓' if st.session_state.config['include_physical'] else '✗'}")
     
@@ -504,14 +506,13 @@ def render_step_4():
             # Save configuration
             st.success("✅ Configuration saved successfully!")
             st.balloons()
-            st.info("Redirecting to dashboard...")
             
             # In a real app, save config to database or file
-            import time
-            time.sleep(2)
+            # For now, configuration is stored in session state
             
             # Reset wizard and go to main app
             st.session_state.current_step = 1
+            st.info("✨ Redirecting to dashboard...")
             st.switch_page("dashboard/jobcopilot_app.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
