@@ -56,7 +56,30 @@ docker-logs:  ## Show Docker logs
 run:  ## Run the CLI scraper
 	python main.py
 
-dashboard:  ## Run the Streamlit dashboard
+# One-click launch commands
+launch:  ## One-click launch (interactive menu)
+	@bash launch.sh
+
+home:  ## Launch home page
+	streamlit run dashboard/home.py
+
+wizard:  ## Launch configuration wizard
+	streamlit run dashboard/copilot_wizard.py
+
+main:  ## Launch main dashboard (JobCopilot)
+	streamlit run dashboard/jobcopilot_app.py
+
+dashboard:  ## Launch job scraping dashboard
 	streamlit run dashboard/app.py
+
+demo:  ## Run demo script
+	python demo_jobcopilot.py
+
+# Docker one-click commands
+docker-launch:  ## One-click Docker launch (home page)
+	docker-compose up -d
+
+docker-launch-all:  ## Launch all services
+	docker-compose --profile wizard --profile dashboard --profile scraper up -d
 
 .DEFAULT_GOAL := help
