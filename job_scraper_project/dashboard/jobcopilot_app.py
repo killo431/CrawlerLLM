@@ -38,6 +38,14 @@ st.markdown("""
 st.title("🚀 JobCopilot - Undetectable AI Application Generator")
 st.markdown("*Powered by 'The Detection Arms Race' research*")
 
+# Quick access to configuration wizard
+col1, col2, col3 = st.columns([2, 1, 2])
+with col2:
+    if st.button("⚙️ Setup Wizard", use_container_width=True, help="Multi-step configuration wizard"):
+        st.switch_page("dashboard/copilot_wizard.py")
+
+st.divider()
+
 # Initialize session state
 if 'generated_resume' not in st.session_state:
     st.session_state.generated_resume = None

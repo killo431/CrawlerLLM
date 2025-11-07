@@ -13,6 +13,11 @@ A production-ready system for **AI-powered job application generation** with **i
 
 ### Core Features
 
+- ⚙️ **Configuration Wizard**: Multi-step setup interface (NEW!)
+  - Step 1: Job preferences (location, types, titles)
+  - Step 2: Optional filters (experience, salary)
+  - Step 3: Resume upload and selection
+  - Step 4: Writing style customization
 - 🎯 **Stealth Engine**: Uses Google Gemini 2.5 Pro (53% detection rate vs 99%+ for other models)
 - 📊 **Application Stealth Score**: Real-time AI detection risk analysis (0-100% scale)
 - 🎨 **Authenticity Polish Wizard**: 3-step guided editing (Burstiness, Perplexity, Stylometry)
