@@ -25,6 +25,7 @@ wheels/
 
 # Data and logs
 data/output/
+data/voice_profiles/
 logs/
 *.log
 

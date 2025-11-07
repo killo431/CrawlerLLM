@@ -1,21 +1,48 @@
-# OSINT + Job Scraping Dashboard
+# JobCopilot - Undetectable AI Application Generator
 
 [![CI/CD Pipeline](https://github.com/killo431/CrawlerLLM/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/killo431/CrawlerLLM/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-ready, modular job scraping system with OSINT capabilities. Extract job listings from multiple career sites, perform OSINT investigations, and generate new adapters using AI.
+A production-ready system for **AI-powered job application generation** with **intelligent job scraping**. Generate resumes and cover letters that are undetectable by AI detection systems like Turnitin, Originality.ai, and GPTZero.
+
+## 🚀 JobCopilot - AI Detection Evasion System
+
+**Based on "The Detection Arms Race" research paper**, JobCopilot creates application documents designed to bypass AI detection systems used by hiring managers and ATS.
+
+### Core Features
+
+- 🎯 **Stealth Engine**: Uses Google Gemini 2.5 Pro (53% detection rate vs 99%+ for other models)
+- 📊 **Application Stealth Score**: Real-time AI detection risk analysis (0-100% scale)
+- 🎨 **Authenticity Polish Wizard**: 3-step guided editing (Burstiness, Perplexity, Stylometry)
+- 🎤 **AI Voice Cloning**: Fine-tune personalized models on your writing style
+- 🎛️ **Advanced Style Controls**: Perplexity, burstiness, tone, and imperfection sliders
+
+**Target: <20% detection rate = Safe to submit**
+
+[📚 Full Feature Documentation](docs/JOBCOPILOT_FEATURES.md) | [📖 Research Paper Summary](docs/DETECTION_ARMS_RACE.md)
 
 ## ✨ Features
 
-- **Job Scraping**: Extract job listings from Indeed, LinkedIn, and Glassdoor
-- **OSINT Tools**: Phone lookup, digital footprint tracing, and email breach checking
-- **AI-Powered**: LLM-based adapter generation for new sites
-- **Stealth Capabilities**: Proxy rotation and fingerprint masking
-- **Production Ready**: Docker support, CI/CD, comprehensive testing
-- **Interactive Dashboard**: Streamlit UI for all features
-- **CLI Interface**: Command-line tool for batch processing
+### JobCopilot Application Generation
+- **Resume Generation**: AI-generated resumes with low detectability
+- **Cover Letter Generation**: Personalized cover letters matching your style
+- **Stealth Scoring**: Detection risk analysis with actionable suggestions
+- **Voice Cloning**: Train models on your writing samples
+- **Authenticity Polish**: Fix AI markers (fingerprint words, burstiness, perplexity)
+
+### Job Scraping & Intelligence
+- **Job Extraction**: Scrape Indeed, LinkedIn, and Glassdoor
+- **Export**: JSON and CSV formats
+- **Benchmarking**: Performance tracking
+- **AI-Powered Parsing**: Intelligent data extraction
+
+### Infrastructure
+- **Production Ready**: Docker support, CI/CD, comprehensive testing (70+ tests)
+- **Interactive Dashboard**: Streamlit UI with complete workflow
+- **CLI Interface**: Command-line batch processing
+- **Modular Architecture**: Easy to extend and customize
 
 ## 📋 Requirements
 
@@ -24,6 +51,19 @@ A production-ready, modular job scraping system with OSINT capabilities. Extract
 - Playwright browsers (installed automatically)
 
 ## 🚀 Quick Start
+
+### JobCopilot Dashboard (NEW)
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run JobCopilot dashboard
+streamlit run dashboard/jobcopilot_app.py
+
+# Or run the demo
+python demo_jobcopilot.py
+```
 
 ### Using Make (Recommended)
 
@@ -58,15 +98,21 @@ make format
    # Edit .env with your settings
    ```
 
-3. **Run the CLI:**
+3. **Run JobCopilot:**
+   ```bash
+   # Interactive dashboard
+   streamlit run dashboard/jobcopilot_app.py
+   
+   # Or demo
+   python demo_jobcopilot.py
+   ```
+
+4. **Run job scraper CLI:**
    ```bash
    python main.py
    ```
 
-4. **Run the dashboard:**
-   ```bash
-   streamlit run dashboard/app.py
-   ```
+
 
 ### Using Docker
 
@@ -101,19 +147,22 @@ job_scraper_project/
 │   ├── environment.py    # Environment variables
 │   ├── proxy.py          # Proxy rotation
 │   └── utils.py          # Utility functions
-├── scrapers/osint/       # OSINT tools
-│   ├── phone_lookup.py   # Phone number lookup
-│   ├── footprint_trace.py # Digital footprint tracing
-│   └── breach_checker.py # Email breach checking
-├── ai_dev/               # AI features
+├── ai_dev/               # AI features (JobCopilot)
+│   ├── text_generator.py    # Stealth Engine
+│   ├── stealth_scorer.py    # AI detection scoring
+│   ├── voice_cloning.py     # Personalized models
+│   ├── authenticity_polish.py # Polish wizard
 │   └── feature_developer.py # Adapter generation
-├── dashboard/            # Streamlit dashboard
-│   └── app.py
-├── tests/                # Test suite
+├── dashboard/            # Streamlit dashboards
+│   ├── jobcopilot_app.py # JobCopilot UI (main)
+│   └── app.py            # Legacy scraper UI
+├── tests/                # Test suite (70+ tests)
+│   ├── test_text_generator.py
+│   ├── test_stealth_scorer.py
+│   ├── test_voice_cloning.py
+│   ├── test_authenticity_polish.py
 │   ├── test_base_scraper.py
-│   ├── test_export_manager.py
-│   ├── test_utils.py
-│   └── test_config.py
+│   └── ...
 ├── data/output/          # Output data
 ├── logs/                 # Log files
 ├── config.yaml           # Configuration file
@@ -127,6 +176,48 @@ job_scraper_project/
 
 ## 🎯 Usage
 
+### JobCopilot - Generate Undetectable Applications
+
+**Recommended Workflow:**
+
+```bash
+# Run the JobCopilot dashboard
+streamlit run dashboard/jobcopilot_app.py
+
+# Or run the demo
+python demo_jobcopilot.py
+```
+
+**Complete Process:**
+
+1. **Setup Voice Profile** (Optional but recommended)
+   - Upload 3-5 writing samples
+   - Train personalized model
+   - System learns your writing style
+
+2. **Generate Application**
+   - Enter your profile details
+   - Enter job requirements
+   - Click "Generate" → Creates resume + cover letter
+
+3. **Check Stealth Score**
+   - System automatically calculates detection risk
+   - Target: <20% = Safe to submit
+   - View specific issues and suggestions
+
+4. **Polish (if needed)**
+   - Use Authenticity Wizard for guided editing
+   - Fix burstiness (sentence variation)
+   - Fix perplexity (add personal touches)
+   - Fix stylometry (remove AI-fingerprint words)
+
+5. **Final Check & Submit**
+   - Recalculate score
+   - Download documents
+   - Submit with confidence!
+
+[📚 Full API Documentation](docs/JOBCOPILOT_FEATURES.md)
+
 ### Job Scraping (CLI)
 
 ```bash
@@ -137,32 +228,6 @@ python main.py
 # - all_jobs.json
 # - all_jobs.csv
 ```
-
-### Job Scraping (Dashboard)
-
-1. Open the dashboard: `streamlit run dashboard/app.py`
-2. Navigate to "Job Scraping" tab
-3. Select a job board (Indeed, LinkedIn, or Glassdoor)
-4. Click "Start Scraping"
-5. View and export results
-
-### OSINT Tools
-
-Access through the dashboard:
-
-- **Phone Lookup**: Enter a phone number to get carrier and location info
-- **Footprint Trace**: Enter a name to find associated online accounts
-- **Breach Checker**: Enter an email to check for known data breaches
-
-### AI Feature Developer
-
-Generate new scraper adapters automatically:
-
-1. Navigate to "AI Feature Developer" tab
-2. Enter target site domain
-3. Specify fields to extract
-4. Generate adapter code
-5. Save to adapters/ directory
 
 ## ⚙️ Configuration
 
