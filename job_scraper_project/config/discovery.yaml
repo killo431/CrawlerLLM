@@ -1,0 +1,60 @@
+# Job Discovery Configuration
+# Settings for real-time job discovery and notifications
+
+celery:
+  # Broker URL (Redis)
+  broker_url: "redis://localhost:6379/0"
+  
+  # Result backend
+  result_backend: "redis://localhost:6379/0"
+  
+  # Task settings
+  task_serializer: "json"
+  result_serializer: "json"
+  accept_content: ["json"]
+  timezone: "UTC"
+  enable_utc: true
+
+scheduling:
+  # Scraping interval (minutes)
+  scraping_interval: 30
+  
+  # Platforms to scrape
+  platforms:
+    - linkedin
+    - indeed
+    - glassdoor
+  
+  # Peak hours to avoid (24-hour format)
+  avoid_hours:
+    start: 22  # 10 PM
+    end: 6     # 6 AM
+
+deduplication:
+  # Deduplication strategy
+  strategy: "fingerprint"  # or "fuzzy"
+  
+  # Fuzzy matching threshold
+  similarity_threshold: 0.9
+  
+  # Cache size (number of job fingerprints to keep in memory)
+  cache_size: 10000
+
+notifications:
+  # Notify for high-quality matches only
+  min_match_score: 90.0
+  
+  # Notification rate limiting
+  max_notifications_per_hour: 10
+  max_notifications_per_day: 50
+  
+  # Notification channels
+  default_channels:
+    - email
+  
+  # Email settings
+  email:
+    from_address: "notifications@jobcopilot.app"
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    use_tls: true
