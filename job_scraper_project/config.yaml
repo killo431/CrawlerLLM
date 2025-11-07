@@ -18,3 +18,39 @@ glassdoor:
   base_url: "https://www.glassdoor.com/Job/python-jobs"
   crawl_delay: 2
   dynamic: true
+
+# Automation configuration
+automation:
+  submission:
+    enabled: true
+    platforms:
+      - linkedin
+      - indeed
+      - greenhouse
+      - generic
+    retry_attempts: 3
+    retry_delay: 5  # seconds between retries
+    screenshot_on_error: true
+    screenshot_on_success: true
+    screenshot_dir: "data/screenshots"
+    captcha_detection: true
+    pause_on_captcha: true
+    captcha_wait_time: 300  # seconds to wait for manual CAPTCHA solving
+    verify_submission: true
+    
+  rate_limiting:
+    enabled: true
+    applications_per_hour: 10
+    delay_between_submissions: 30  # seconds
+    delay_between_actions: 1.0  # seconds between form actions
+    
+  browser:
+    headless: false  # Set to true for production
+    slow_mo: 100  # milliseconds - slows down actions to appear more human
+    page_load_timeout: 30  # seconds
+    element_timeout: 10  # seconds
+    
+  timeouts:
+    page_load: 30  # seconds
+    element_wait: 10  # seconds
+    confirmation_wait: 10  # seconds
