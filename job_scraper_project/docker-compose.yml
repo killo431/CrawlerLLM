@@ -1,11 +1,13 @@
 version: '3.8'
 
 services:
-  job-scraper:
+  # Main application - Home Page (Default)
+  jobcopilot-home:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: job-scraper-app
+    container_name: jobcopilot-home
+    command: ["streamlit", "run", "dashboard/home.py", "--server.address", "0.0.0.0"]
     ports:
       - "8501:8501"
     volumes:
@@ -16,6 +18,72 @@ services:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Configuration Wizard
+  jobcopilot-wizard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jobcopilot-wizard
+    command: ["streamlit", "run", "dashboard/copilot_wizard.py", "--server.address", "0.0.0.0"]
+    ports:
+      - "8502:8501"
+    volumes:
+      - ./data/output:/app/data/output
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    profiles:
+      - wizard
+
+  # Main Dashboard
+  jobcopilot-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jobcopilot-dashboard
+    command: ["streamlit", "run", "dashboard/jobcopilot_app.py", "--server.address", "0.0.0.0"]
+    ports:
+      - "8503:8501"
+    volumes:
+      - ./data/output:/app/data/output
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    profiles:
+      - dashboard
+
+  # Legacy job scraper dashboard
+  job-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: job-scraper-app
+    command: ["streamlit", "run", "dashboard/app.py", "--server.address", "0.0.0.0"]
+    ports:
+      - "8504:8501"
+    volumes:
+      - ./data/output:/app/data/output
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    profiles:
+      - scraper
     healthcheck:
       test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
       interval: 30s

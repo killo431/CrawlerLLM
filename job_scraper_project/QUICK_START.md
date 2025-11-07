@@ -2,6 +2,31 @@
 
 ## Installation
 
+### 🚀 One-Click Installation (Recommended)
+
+#### On Linux/Mac:
+```bash
+git clone https://github.com/killo431/CrawlerLLM.git
+cd CrawlerLLM/job_scraper_project
+./launch.sh
+```
+
+#### On Windows:
+```cmd
+git clone https://github.com/killo431/CrawlerLLM.git
+cd CrawlerLLM\job_scraper_project
+launch.bat
+```
+
+The launch script will:
+- ✅ Check Python version
+- ✅ Install dependencies automatically
+- ✅ Install Playwright browsers
+- ✅ Create .env file
+- ✅ Launch the application
+
+### Manual Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/killo431/CrawlerLLM.git

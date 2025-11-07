@@ -55,33 +55,92 @@ A production-ready system for **AI-powered job application generation** with **i
 - Docker (optional, for containerized deployment)
 - Playwright browsers (installed automatically)
 
-## 🚀 Quick Start
+## 🚀 One-Click Quick Start
 
-### JobCopilot Dashboard (NEW)
+### Option 1: Launch Script (Easiest) ⭐
+
+#### Linux/Mac:
+```bash
+./launch.sh
+```
+
+#### Windows:
+```cmd
+launch.bat
+```
+
+**What it does:**
+- ✅ Checks system requirements
+- ✅ Installs dependencies automatically
+- ✅ Installs Playwright browsers
+- ✅ Interactive menu to choose application
+- ✅ Launches your selected app instantly
+
+### Option 2: Make Commands (Recommended)
+
+```bash
+# One-click launch with menu
+make launch
+
+# Or launch specific app
+make home          # Home page (recommended)
+make wizard        # Configuration wizard
+make main          # Main dashboard
+make dashboard     # Job scraping
+make demo          # Demo script
+
+# Docker one-click
+make docker-launch       # Launch in Docker
+```
+
+### Option 3: Docker (For Production)
+
+```bash
+# One-click Docker launch
+docker-compose up -d
+
+# Access at http://localhost:8501
+```
+
+### Option 4: Manual Launch
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
+playwright install chromium
 
-# Run JobCopilot dashboard
-streamlit run dashboard/jobcopilot_app.py
+# Launch home page
+streamlit run dashboard/home.py
 
 # Or run the demo
 python demo_jobcopilot.py
 ```
 
-### Using Make (Recommended)
+See [ONE_CLICK_DEPLOY.md](docs/ONE_CLICK_DEPLOY.md) for complete deployment guide.
+
+## 📖 Using the Application
+
+### First-Time Users
+1. Run `./launch.sh` (or `launch.bat` on Windows)
+2. Select option 1 (Home Page)
+3. Click "Start Setup →" to begin wizard
+4. Complete 4-step configuration
+5. Generate your first AI application!
+
+### Experienced Users
+1. Run `make home` to launch home page
+2. Click "Generate Now →" for direct access
+3. Or use `make main` for main dashboard
+
+### Available Applications
+- **Home Page** (Port 8501) - Landing page with quick access
+- **Configuration Wizard** (Port 8502) - 4-step guided setup
+- **Main Dashboard** (Port 8503) - AI application generation
+- **Job Scraping** (Port 8504) - Job board scraping
+
+## 🧪 Testing
 
 ```bash
-# Install dependencies
-make install
-
-# Run the CLI scraper
-make run
-
-# Run the dashboard
-make dashboard
-
 # Run tests
 make test
 
