@@ -1,0 +1,14 @@
+# Machine Learning & NLP Dependencies
+# These are heavy dependencies, install separately: pip install -r requirements-ml.txt
+
+# Feature 2: Intelligent Job Matching
+sentence-transformers>=2.0.0
+scikit-learn>=1.3.0
+
+# Feature 5: ATS Optimization
+spacy>=3.5.0
+# After installing, run: python -m spacy download en_core_web_sm
+
+# Optional: For advanced NLP
+# transformers>=4.30.0
+# torch>=2.0.0

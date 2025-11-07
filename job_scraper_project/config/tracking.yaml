@@ -1,0 +1,48 @@
+# Application Tracking Configuration
+# Settings for tracking applications and monitoring responses
+
+database:
+  # Database connection
+  # For production: postgresql://user:pass@localhost/jobcopilot
+  # For development: sqlite:///applications.db
+  connection_string: "sqlite:///data/applications.db"
+  
+  # Connection pool settings
+  pool_size: 5
+  max_overflow: 10
+
+email_monitoring:
+  # Email check interval (minutes)
+  check_interval: 15
+  
+  # Email providers to support
+  providers:
+    - gmail
+    # - outlook
+  
+  # Gmail API settings
+  gmail:
+    credentials_path: "config/gmail_credentials.json"
+    token_path: "config/gmail_token.json"
+    scopes:
+      - "https://www.googleapis.com/auth/gmail.readonly"
+  
+  # Email classification
+  classification:
+    # Confidence threshold for auto-classification
+    confidence_threshold: 0.7
+    
+    # Use LLM for low-confidence cases
+    use_llm_fallback: false
+
+notifications:
+  # Notify on status changes
+  notify_on_response: true
+  notify_on_interview: true
+  notify_on_rejection: false
+  
+  # Notification channels
+  channels:
+    - email
+    # - push
+    # - sms

@@ -1,0 +1,42 @@
+# Automation Configuration
+# Settings for automated application submission
+
+submission:
+  # Maximum concurrent applications
+  max_concurrent: 3
+  
+  # Retry configuration
+  max_retries: 3
+  retry_delay_seconds: 5
+  
+  # Timeout settings (seconds)
+  page_load_timeout: 30
+  form_fill_timeout: 60
+  submission_timeout: 120
+  
+  # Screenshot settings
+  take_screenshots: true
+  screenshot_on_error: true
+  screenshot_directory: "data/screenshots"
+
+platforms:
+  linkedin:
+    enabled: true
+    easy_apply_only: true
+    wait_between_steps: 2
+    
+  indeed:
+    enabled: true
+    handle_external_redirects: false
+    
+  greenhouse:
+    enabled: true
+    
+  lever:
+    enabled: false
+
+# Rate limiting to avoid detection
+rate_limiting:
+  applications_per_hour: 10
+  applications_per_day: 50
+  min_delay_between_applications: 300  # 5 minutes
